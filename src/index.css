@@ -1,13 +1,66 @@
-body {
+html, body {
+  height: 100%;
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  padding: 0;
+  font-family: Arial, sans-serif;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+.weather-container {
+  background: #ffffff;
+  border-radius: 3vw;
+  box-shadow: 0 0.5vw 2vw rgba(0, 0, 0, 0.1);
+  padding: 3vh;
+  
+  width: 35vh;
+  height: 35vh;
+  min-width: 30vh;
+  min-height: 30vh;
+  max-width: 40vh;
+  max-height: 40vh;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.city {
+  font-size: 4vh; 
+  margin-bottom: 2vh;
+  color: #333;
+}
+
+.weather-details p {
+  font-size: 2vh; 
+  margin: 0.5vh 0;
+  color: #555;
+}
+
+.weather-icon {
+  width: 10vh; 
+  height: 10vh;
+  margin: 2vh 0;
+}
+
+@media (orientation: landscape) {
+  .weather-container {
+    width: 50vw;
+    height: 35vh;
+  }
+
+  .city {
+    font-size: 3vh;
+  }
+
+  .weather-details p {
+    font-size: 1.8vh;
+  }
+
+  .weather-icon {
+    width: 8vh;
+    height: 8vh;
+  }
 }
