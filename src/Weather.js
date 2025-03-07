@@ -53,7 +53,7 @@ const Weather = () => {
           setWeather(data);
           setLoading(false);
         })
-        .catch((error) => console.error("Error fetching weather data:", error));
+        .catch((error) => console.error("Error fetching", error));
     }
   };
 
@@ -77,16 +77,16 @@ const Weather = () => {
       <img src={iconUrl} alt="Weather Icon" className="weather-icon" />
       <div className="weather-details">
         <p>
-          <strong>Temperatură:</strong> {weather.main.temp}°C
+          <strong>Temperatură:</strong> {parseFloat(weather.main.temp).toFixed(1)}°C
         </p>
         <p>
-          <strong>Resimțită:</strong> {weather.main.feels_like}°C
+          <strong>Resimțită:</strong> {parseFloat(weather.main.feels_like).toFixed(1)}°C
         </p>
         <p>
           <strong>Umiditate:</strong> {weather.main.humidity}%
         </p>
         <p>
-          <strong>Vânt:</strong> {weather.wind.speed} m/s
+          <strong>Vânt:</strong> {parseFloat(weather.wind.speed * 3.6).toFixed(2)} km/h
         </p>
         <p>
           <strong>Condiție:</strong> {translatedCondition}
