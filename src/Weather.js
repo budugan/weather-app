@@ -86,7 +86,7 @@ const Weather = () => {
           <strong>Umiditate:</strong> {weather.main.humidity}%
         </p>
         <p>
-          <strong>Vânt:</strong> {parseFloat(weather.wind.speed * 3.6).toFixed(2)} km/h
+          <strong>Vânt:</strong> {parseFloat(weather.wind.speed * 3.6).toFixed(1)} km/h
         </p>
         <p>
           <strong>Condiție:</strong> {translatedCondition}
