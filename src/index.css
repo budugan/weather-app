@@ -11,7 +11,7 @@ html, body {
 .weather-container {
   background: #ffffff;
   border-radius: 3vw;
-  box-shadow: 0 0.5vw 2vw rgba(0, 0, 0, 0.1);
+  box-shadow: 0 0vw 1vw rgba(0, 0, 0, 0.1);
   padding: 3vh;
   
   width: 35vh;
