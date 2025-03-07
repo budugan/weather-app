@@ -42,7 +42,6 @@ html, body {
 .weather-icon {
   width: 10vh; 
   height: 10vh;
-  margin: 2vh 0;
 }
 
 @media (orientation: landscape) {
@@ -60,7 +59,7 @@ html, body {
   }
 
   .weather-icon {
-    width: 8vh;
-    height: 8vh;
+    width: 12vh;
+    height: 12vh;
   }
 }
