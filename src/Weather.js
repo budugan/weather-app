@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 
 const API_KEY = "53140cc1b870b88e3ec6f24d476ba4c1";
@@ -42,6 +42,99 @@ const Weather = () => {
   const { lat, lon } = useParams();
   const [weather, setWeather] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [currentDate, setCurrentDate] = useState(getDate());
+  const [currentTime, setCurrentTime] = useState(getTime());
+  
+  
+
+  //BEGIN
+  const maxNrOfResizes = 500;
+  const resizeObserverTimeout = useRef(null);
+  let container = useRef(null);
+
+  useEffect(() => {
+    adjustFontSize();
+
+    const ro = new ResizeObserver(() => {
+      clearTimeout(resizeObserverTimeout.current);
+
+      resizeObserverTimeout.current = setTimeout(() => {
+        console.log("from use effect");
+        adjustFontSize();
+      }, 1000);
+    });
+    if (container.current) {
+      console.log("added");
+      ro.observe(container.current);
+    }
+
+    // Cleanup the ResizeObserver on unmount
+    return () => {
+      if (container.current) {
+        console.log("removed");
+        ro.unobserve(container.current);
+      }
+    };
+  }, [weather]);
+  const adjustFontSize = () => {
+    if (container.current && container.current && weather) {
+      let internalFontSize = parseFloat(
+        getComputedStyle(container.current).fontSize
+      );
+      container.current.style.fontSize = internalFontSize + "px";
+
+      console.log(
+        internalFontSize + "px",
+        container.current.clientHeight,
+        container.current.scrollHeight
+      );
+
+      // Use requestAnimationFrame to optimize performance
+      requestAnimationFrame(() => {
+        let iterations = 0;
+        while (
+          container.current.clientWidth >= container.current.scrollWidth &&
+          container.current.clientHeight >= container.current.scrollHeight
+        ) {
+          internalFontSize++;
+          container.current.style.fontSize = internalFontSize + "px";
+
+          console.log("+");
+          iterations++;
+          if (iterations > maxNrOfResizes) {
+            clearTimeout(resizeObserverTimeout.current);
+
+            resizeObserverTimeout.current = setTimeout(() => {
+              adjustFontSize();
+            }, 1000);
+            return;
+          }
+        }
+        while (
+          container.current.clientWidth < container.current.scrollWidth ||
+          container.current.clientHeight < container.current.scrollHeight
+        ) {
+          internalFontSize--;
+          container.current.style.fontSize = internalFontSize + "px";
+
+          console.log("-");
+
+          iterations++;
+
+          if (iterations > maxNrOfResizes) {
+            clearTimeout(resizeObserverTimeout.current);
+
+            resizeObserverTimeout.current = setTimeout(() => {
+              adjustFontSize();
+            }, 1000);
+            return;
+          }
+        }
+      });
+    }
+  };
+
+  // END
 
   const fetchWeather = () => {
     if (lat && lon) {
@@ -59,9 +152,23 @@ const Weather = () => {
 
   useEffect(() => {
     fetchWeather();
-    const interval = setInterval(fetchWeather, 300000);
-    return () => clearInterval(interval);
-  }, [lat, lon,]);
+
+    const fiveMinuteInterval = setInterval(fetchWeather, 300000); 
+
+    const dateCheckInterval = setInterval(() => {
+      const newDate = getDate();
+      const newTime = getTime();
+      if (newDate !== currentDate) {
+        setCurrentDate(newDate);
+        fetchWeather();
+      }
+      setCurrentTime(newTime); 
+    }, 10000);
+    return () => {
+      clearInterval(fiveMinuteInterval);
+      clearInterval(dateCheckInterval);
+    };
+  }, [currentDate, lat, lon]);
 
   if (loading) return <p>Se incarca...</p>;
   if (!weather) return <p>Nicio informatie disponibila</p>;
@@ -71,27 +178,56 @@ const Weather = () => {
   const condition = weather.weather[0].description;
   const translatedCondition = weatherTranslations[condition] || condition;
 
+  function getDate() {
+    const today = new Date();
+    const month = today.getMonth() + 1;
+    const year = today.getFullYear();
+    const date = today.getDate();
+    return `${date}/${month}/${year}`;
+  }
+  function getTime() {
+    const now = new Date();
+    const hours = now.getHours().toString().padStart(2, "0");
+    const minutes = now.getMinutes().toString().padStart(2, "0");
+    return `${hours}:${minutes}`;
+  }
+  
+
   return (
-    <div className="weather-container">
-      <h2 className="city">Vremea în {weather.name}</h2>
-      <img src={iconUrl} alt="Weather Icon" className="weather-icon" />
+    <div className="wCW">
+    <div className="weather-container" ref={container}>
+
+      <div className="icon-div">
+        <img src={iconUrl} alt="Weather Icon" className="weather-icon" />
+        <div className="cityWrapper">
+          <h5 className="city">{weather.name}</h5>
+          <h6 className="city">{currentDate}</h6>
+          <h6 className="city">{currentTime}</h6>
+        </div>
+      </div>
+ 
+
       <div className="weather-details">
         <p>
-          <strong>Temperatură:</strong> {parseFloat(weather.main.temp).toFixed(1)}°C
+          <strong>Temperatură:</strong>{" "}
+          {parseFloat(weather.main.temp).toFixed(1)}°C
         </p>
         <p>
-          <strong>Resimțită:</strong> {parseFloat(weather.main.feels_like).toFixed(1)}°C
+          <strong>Resimțită:</strong>{" "}
+          {parseFloat(weather.main.feels_like).toFixed(1)}°C
         </p>
         <p>
           <strong>Umiditate:</strong> {weather.main.humidity}%
         </p>
         <p>
-          <strong>Vânt:</strong> {parseFloat(weather.wind.speed * 3.6).toFixed(1)} km/h
+          <strong>Vânt:</strong>{" "}
+          {parseFloat(weather.wind.speed * 3.6).toFixed(1)} km/h
         </p>
         <p>
           <strong>Condiție:</strong> {translatedCondition}
         </p>
       </div>
+    </div>
     </div>
   );
 };
