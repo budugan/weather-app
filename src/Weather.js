@@ -173,8 +173,10 @@ const Weather = () => {
   if (loading) return <p>Se incarca...</p>;
   if (!weather) return <p>Nicio informatie disponibila</p>;
 
-  const iconCode = weather.weather[0].icon;
-  const iconUrl = `https://openweathermap.org/img/wn/${iconCode}@2x.png`;
+  const iconCode = weather.weather[0].icon + "@2x.png";
+  // const iconUrl = "/p + iconCode + "@2x.png";
+  const iconPath = "/icons/"
+  const iconUrl = iconPath + iconCode
   const condition = weather.weather[0].description;
   const translatedCondition = weatherTranslations[condition] || condition;
 
